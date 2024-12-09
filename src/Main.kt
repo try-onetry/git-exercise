@@ -3,8 +3,8 @@ fun main() {
     add(1,2)
     add3number(1,2,3)
     multiply(1)
-
     println(minus(1, 2))
+    where()
 
 }
 
@@ -20,7 +20,11 @@ fun add3number(a: Int, b: Int, c: Int): Int {
 fun multiply(a: Int): Int {
     return a * 2
 }
+
 fun minus(a: Int, b: Int): Int {
     return a - b
+}
 
+fun where() {
+    println("where i am")
 }
