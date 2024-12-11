@@ -5,7 +5,7 @@ import java.util.Queue;
 
 public class Exercise2 {
     public static void main(String[] args) {
-        String str = "12+8-4";
+        String str = "-4+6";
         System.out.println(calc(str));
         String str2 = "12--7-4";
         System.out.println(calc(str2));
@@ -16,31 +16,24 @@ public class Exercise2 {
         Queue<Character> operation = new LinkedList<>();
         int num = 0;
         int result = 0;
-        for(int i = 0; i < str.length() - 1; i++){
-            char start = str.charAt(0);
-            char end = str.charAt(str.length() - 1);
-            if ((start == '+' )&&
-                    (end == '+' || end == '-')) {
-                throw new IllegalArgumentException("Invalid input.");
-            }
+        char end = str.charAt(str.length() - 1);
+        if (end == '+' || end == '-') {
+            throw new IllegalArgumentException("Invalid input.");
+        }
+        for(int i = 0; i < str.length() - 2; i++){
             char first = str.charAt(i);
             char second = str.charAt(i + 1);
-
+            char third = str.charAt(i + 2);
             if ((first == '+' || first == '-') &&
-                    (second == '+')) {
+                    (second == '+' || second == '-') &&
+                    (third == '+' || third == '-')) {
                 throw new IllegalArgumentException("Invalid input.");
             }
-            if ((first == '+' || first == '-') &&
-                    (second == '-') && i < str.length() - 2) {
-                char third = str.charAt(i + 2);
-                if (third == '+' || third == '-'){
-                    throw new IllegalArgumentException("Invalid input.");
-                }
-                else{
-                    str = str.replace("+-","-");
-                    str = str.replace("--","+");
-                }
-            }
+
+            str = str.replace("++","+");
+            str = str.replace("--","+");
+            str = str.replace("+-","-");
+            str = str.replace("-+","-");
         }
 
 
@@ -59,7 +52,8 @@ public class Exercise2 {
             }
         }
         if (str.charAt(0) == '-'){
-            result = 0 - nums.poll();
+            nums.poll();//如果是负数第一个，第一个进队列的是0
+            result = -nums.poll();
             operation.poll();
         }
         else{
@@ -74,6 +68,4 @@ public class Exercise2 {
 
         return result;
     }
-
-
 }
