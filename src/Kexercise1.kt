@@ -1,14 +1,6 @@
 class Kexercise1 {
-    fun main() {
-        val number: MutableList<Int> = ArrayList()
-        number.add(0)
-        number.add(1)
-        number.add(2)
-        number.add(3)
-        printAll(number)
-    }
 
-    private fun printAll(list: List<Int>) {
+    fun printAll(list: List<Int>) {
         println(list)
 
         for (i in list.indices) {
@@ -19,4 +11,10 @@ class Kexercise1 {
             println(integer)
         }
     }
+}
+
+fun main(){
+    val number = listOf(0,1,2,3)
+    val a = Kexercise1()
+    a.printAll(number)
 }
