@@ -2,8 +2,8 @@ import java.util.*;
 
 public class Exercise3 {
     public static void main(String[] args) {
-//        String str1 = "-6*+3+-9";
-//        System.out.println(calc(str1));
+        String str1 = "--6";
+        System.out.println(calc(str1));
         String str2 = "12+7*-2--4/2";
         System.out.println(calc(str2));
     }
@@ -63,6 +63,8 @@ public class Exercise3 {
         Queue<Integer> nums = new LinkedList<>();
         Queue<Character> ops = new LinkedList<>();
 
+        if (!Character.isDigit(str.charAt(0))) str = '0' + str; // 符号开头的处理
+
         int num = 0;
         for (int i = 0; i < str.length(); i++) {
             char ch = str.charAt(i);
@@ -76,12 +78,12 @@ public class Exercise3 {
             if (input == 'd') {
                 num = num * 10 + (ch - '0');
             } else {
-                if (nextState == 2){
+                if (nextState == 2) {
                     nums.add(isNegative ? -num : num);
                     num = 0;
                     ops.add(input);
                     isNegative = false;
-                }else if (nextState == 1)
+                } else if (nextState == 1)
                     isNegative = input == '-';
 
             }

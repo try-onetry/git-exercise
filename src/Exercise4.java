@@ -3,9 +3,9 @@ import java.util.*;
 public class Exercise4 {
     public static void main(String[] args) {
         String str1 = "-6*+3";
-        System.out.println(Calc(str1));
-        String str2 = "((12+7)* -2+)-4/2";
-        System.out.println(Calc(str2));
+        System.out.println(calc(str1));
+        String str2 = "-(-1)";
+        System.out.println(calc(str2));
     }
 
     static class DFANode {
@@ -55,7 +55,7 @@ public class Exercise4 {
     }
 
     // 递归解析括号并计算表达式
-    private static int Calc(String str) {
+    private static int calc(String str) {
         str = str.replaceAll(" ", "");
         StringBuffer substr = new StringBuffer(); // 用于提取括号内的内容
         int result = 0;
@@ -74,13 +74,11 @@ public class Exercise4 {
                 if (rflag > lflag) {
                     throw new IllegalArgumentException("Invalid input: unmatched parentheses.");
                 } else if (lflag == rflag) {
-                    System.out.println(substr);
-                    int subResult = Calc(substr.toString());
+                    int subResult = calc(substr.toString());
                     str = str.replace('(' + substr.toString() + ')', String.valueOf(subResult));
                     substr.setLength(0); // 清空 substr
-                    System.out.println("***" + str);
-                    return Calc(str);
-                } else {//lflag>rflag
+                    return calc(str);
+                } else { // lflag>rflag
                     substr.append(ch);
                 }
             } else {
@@ -94,10 +92,11 @@ public class Exercise4 {
             throw new IllegalArgumentException("Invalid input: unmatched parentheses.");
         }
         // 没有括号
-        return CalcNoBracket(str);
+        return calcNoBracket(str);
     }
 
-    public static int CalcNoBracket(String str) {
+    public static int calcNoBracket(String str) {
+        if (Objects.equals(str, "")) throw new IllegalArgumentException("Invalid input.");
         int result = 0, num = 0;
         Map<Integer, DFANode> dfa = buildDFA();
         int currentState = 0;
@@ -105,6 +104,8 @@ public class Exercise4 {
 
         Queue<Integer> nums = new LinkedList<>();
         Queue<Character> ops = new LinkedList<>();
+
+        if (!Character.isDigit(str.charAt(0))) str = '0' + str; // 符号开头的处理
 
         for (int i = 0; i < str.length(); i++) {
             char ch = str.charAt(i);
@@ -126,7 +127,6 @@ public class Exercise4 {
                     isNegative = false;
                 } else if (nextState == 1)
                     isNegative = input == '-';
-
             }
             currentState = nextState;
         }
