@@ -9,13 +9,32 @@ public class Exercise5 {
         isAssert(judge("ab*de", "abbde"), true);
         isAssert(judge("ab*98de", "abb98de"), true);
         isAssert(judge("ab+98de", "a98de"), false);
-//        isAssert(judge("+", "a98de"), false);
-//        isAssert(judge("ab*+98de", "a98de"), false);
+        testInvalidRegex();
     }
 
     public static <T> void isAssert(T out, T expect) {
         if (!Objects.equals(out, expect)) {
             throw new IllegalArgumentException("Wrong result");
+        }
+    }
+
+    public static void testInvalidRegex() {
+        List<String> invalidInputs = Arrays.asList(
+                "*abc",
+                "+abc",
+                "ab**c",
+                "a+b+*",
+                ""
+        );
+
+        for (String regex : invalidInputs) {
+            try {
+                judge(regex, "abc");
+            } catch (IllegalArgumentException e) {
+                System.out.println("Correctly threw exception for regex: " + regex);
+            } catch (Exception e) {
+                System.out.println(e+"Unexpected exception for regex: " + regex);
+            }
         }
     }
 
@@ -68,7 +87,9 @@ public class Exercise5 {
     }
 
     private static boolean judge(String regex, String str) {
-        if (str.charAt(0) == '*' || str.charAt(0) == '+') throw new IllegalArgumentException("Invalid regex input.");
+        if (regex.isEmpty() || regex.charAt(0) == '*' || regex.charAt(0) == '+') {
+            throw new IllegalArgumentException("Invalid regex input.");
+        }
         for (int i = 0; i < regex.length() - 1; i++) {
             char ch = regex.charAt(i);
             char chNext = regex.charAt(i + 1);
@@ -76,7 +97,10 @@ public class Exercise5 {
                     (chNext == '*' || chNext == '+')) {
                 throw new IllegalArgumentException("Invalid regex input.");
             }
-            //x+处理为xx*
+        }
+        //x+处理为xx*
+        for (int i = 0; i < regex.length() - 1; i++) {
+            char ch = regex.charAt(i);
             if (ch == '+') {
                 regex = regex.substring(0, i) + str.charAt(i - 1) + "*" + str.substring(i);
             }
