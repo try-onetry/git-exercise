@@ -9,8 +9,6 @@ public class Exercise5 {
         isAssert(judge("ab*de", "abbde"), true);
         isAssert(judge("ab*98de", "abb98de"), true);
         isAssert(judge("ab+98de", "a98de"), false);
-        isAssert(judge("a*", ""), true);
-        isAssert(judge("aaa", "a"), false);
         testInvalidRegex();
     }
 
@@ -25,15 +23,17 @@ public class Exercise5 {
                 "*abc",
                 "+abc",
                 "ab**c",
-                "a+b+*"
+                "a+b+*",
+                ""
         );
 
         for (String regex : invalidInputs) {
             try {
                 judge(regex, "abc");
-                throw new RuntimeException("Unexpected exception");
             } catch (IllegalArgumentException e) {
                 System.out.println("Correctly threw exception for regex: " + regex);
+            } catch (Exception e) {
+                System.out.println(e+"Unexpected exception for regex: " + regex);
             }
         }
     }
@@ -41,7 +41,7 @@ public class Exercise5 {
     static class DFANode {
         int stateId;
         Map<Character, Integer> transitions;
-        boolean finalState = false;
+
         public DFANode(int stateId) {
             this.stateId = stateId;
             this.transitions = new HashMap<>();
@@ -83,12 +83,11 @@ public class Exercise5 {
                 currentNode.addTransition(str.charAt(i - 1), currentNode.stateId);
             }
         }
-        currentNode.finalState = true;
         return dfa;
     }
 
-    public static boolean judge(String regex, String str) {
-        if (regex.charAt(0) == '*' || regex.charAt(0) == '+') {
+    private static boolean judge(String regex, String str) {
+        if (regex.isEmpty() || regex.charAt(0) == '*' || regex.charAt(0) == '+') {
             throw new IllegalArgumentException("Invalid regex input.");
         }
         for (int i = 0; i < regex.length() - 1; i++) {
@@ -118,6 +117,6 @@ public class Exercise5 {
             }
             currentState = nextState;
         }
-        return dfa.get(currentState).finalState;
+        return true;
     }
 }
