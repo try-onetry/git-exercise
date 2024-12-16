@@ -1,10 +1,10 @@
 import java.util.*;
 
-public class Exercise3 {
+public class Exercise4 {
     public static void main(String[] args) {
-        String str1 = "--6";
+        String str1 = "-6*+3";
         System.out.println(calc(str1));
-        String str2 = "12+7*-2--4/2";
+        String str2 = "-(-1)";
         System.out.println(calc(str2));
     }
 
@@ -54,24 +54,66 @@ public class Exercise3 {
         return dfa;
     }
 
-    public static int calc(String str) {
+    // 递归解析括号并计算表达式
+    private static int calc(String str) {
+        str = str.replaceAll(" ", "");
+        StringBuffer substr = new StringBuffer(); // 用于提取括号内的内容
+        int result = 0;
+        int lflag = 0; // 左括号
+        int rflag = 0; // 右括号
 
-        int result;
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            if (ch == '(') {
+                if (lflag > 0) {
+                    substr.append(ch);
+                }
+                lflag++;
+            } else if (ch == ')') {
+                rflag++;
+                if (rflag > lflag) {
+                    throw new IllegalArgumentException("Invalid input: unmatched parentheses.");
+                } else if (lflag == rflag) {
+                    int subResult = calc(substr.toString());
+                    str = str.replace('(' + substr.toString() + ')', String.valueOf(subResult));
+                    substr.setLength(0); // 清空 substr
+                    return calc(str);
+                } else { // lflag>rflag
+                    substr.append(ch);
+                }
+            } else {
+                if (lflag > rflag) {//在括号里的非括号字符
+                    substr.append(ch);
+                }
+            }
+        }
+        // 括号匹配
+        if (lflag != rflag) {
+            throw new IllegalArgumentException("Invalid input: unmatched parentheses.");
+        }
+        // 没有括号
+        return calcNoBracket(str);
+    }
+
+    public static int calcNoBracket(String str) {
+        if (Objects.equals(str, "")) throw new IllegalArgumentException("Invalid input.");
+        int result = 0, num = 0;
         Map<Integer, DFANode> dfa = buildDFA();
         int currentState = 0;
         boolean isNegative = false;
+
         Queue<Integer> nums = new LinkedList<>();
         Queue<Character> ops = new LinkedList<>();
 
         if (!Character.isDigit(str.charAt(0))) str = '0' + str; // 符号开头的处理
 
-        int num = 0;
         for (int i = 0; i < str.length(); i++) {
             char ch = str.charAt(i);
+            char ch_end = str.charAt(str.length() - 1);
             char input = Character.isDigit(ch) ? 'd' : ch;
 
             int nextState = dfa.get(currentState).nextState(input);
-            if (nextState == -1) {
+            if (nextState == -1 || !Character.isDigit(ch_end)) {
                 throw new IllegalArgumentException("Invalid input.");
             }
 
@@ -85,7 +127,6 @@ public class Exercise3 {
                     isNegative = false;
                 } else if (nextState == 1)
                     isNegative = input == '-';
-
             }
             currentState = nextState;
         }
@@ -123,3 +164,4 @@ public class Exercise3 {
         return result;
     }
 }
+
