@@ -1,8 +1,6 @@
 import java.util.*;
 
-import static java.lang.System.*;
-
-public class Exercise5 {
+public class Exercise5_2 {
     public static void main(String[] args) {
         isAssert(judge("a*",""), true);
 //        isAssert(judge("a+",""), false);
