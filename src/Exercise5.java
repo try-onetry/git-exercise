@@ -2,14 +2,16 @@ import java.util.*;
 
 public class Exercise5 {
     public static void main(String[] args) {
-        isAssert(judge("a*",""), true);
-//        isAssert(judge("a+",""), false);
-//        isAssert(judge("a*","a"), true);
-//        isAssert(judge("a*","aa"), true);
-//        isAssert(judge("a*","b"), false);
-//        isAssert(judge("aaa*","a"), false);
-//        isAssert(judge("a*bc*d","abcd"), true);
-//        isAssert(judge("a*bc*d","bccd"), true);
+        isAssert(judge("a*", ""), true);
+        isAssert(judge("a+", ""), false);
+        isAssert(judge("a*", "a"), true);
+        isAssert(judge("a*", "aa"), true);
+        isAssert(judge("a*", "b"), false);
+        isAssert(judge("aaa*", "a"), false);
+        isAssert(judge("a*bc*d", "abcd"), true);
+        isAssert(judge("a*bc*d", "bccd"), true);
+        isAssert(judge("", "a"), false);
+        testInvalidRegex();
     }
 
     public static <T> void isAssert(T out, T expect) {
@@ -18,75 +20,34 @@ public class Exercise5 {
         }
     }
 
+    public static void testInvalidRegex() {
+        List<String> invalidInputs = Arrays.asList(
+                "*abc", "+abc", "ab**c"
+        );
+
+        for (String regex : invalidInputs) {
+            try {
+                judge(regex, "abc");
+                throw new RuntimeException("Unexpected exception");
+            } catch (IllegalArgumentException e) {
+                System.out.println("Correctly threw exception for regex: " + regex);
+            }
+        }
+    }
+
     public static void isInvalidInput(String regex) {
-        if (regex.charAt(0) == '*' || regex.charAt(0) == '+') {
-            throw new IllegalArgumentException("Invalid regex input.");
-        }
-    }
-
-    public static class NFA {
-        Set<Integer> startStates;
-        Set<Integer> endStates;
-        Map<Integer, Map<Character, Set<Integer>>> transitions;
-
-        public NFA() {
-            this.startStates = new HashSet<>();
-            this.endStates = new HashSet<>();
-            this.transitions = new HashMap<>();
-        }
-
-        public void addTransition(int from, char input, int to) {
-            transitions.putIfAbsent(from, new HashMap<>());
-            transitions.get(from).putIfAbsent(input, new HashSet<>());
-            transitions.get(from).get(input).add(to);
-        }
-
-        public void removeTransition(int from, char input, int to) {
-            if (transitions.containsKey(from)) {
-                Map<Character, Set<Integer>> edges = transitions.get(from);
-                if (edges.containsKey(input)) {
-                    edges.get(input).remove(to);
-                }
-                if(edges.get(input).isEmpty()){
-                    edges.remove(input);
-                }
+        if (!regex.isEmpty()) {
+            if (regex.charAt(0) == '*' || regex.charAt(0) == '+') {
+                throw new IllegalArgumentException("Invalid regex input.");
             }
         }
-        // 对一个状态集合求空闭包
-        public Set<Integer> emptyTransition(Set<Integer> stateIDs) {
-            Set<Integer> closure = new HashSet<>(stateIDs);// 先把自己放进去
-            Queue<Integer> queue = new LinkedList<>(stateIDs);
-
-            while (!queue.isEmpty()) {
-                int current = queue.poll();// 一个个状态求闭包
-                if (transitions.containsKey(current) && transitions.get(current).containsKey('\0')) {
-                    for (int nextState : transitions.get(current).get('\0')) {
-                        if (!closure.contains(nextState)) {
-                            closure.add(nextState);// 重复的不要add
-                            queue.add(nextState);
-                        }
-                    }
-                }
+        for (int i = 0; i < regex.length() - 1; i++) {
+            char ch = regex.charAt(i);
+            char chNext = regex.charAt(i + 1);
+            if ((ch == '*' || ch == '+') &&
+                    (chNext == '*' || chNext == '+')) {
+                throw new IllegalArgumentException("Invalid regex input.");
             }
-
-            return closure;
-        }
-    }
-
-    public static class DFA {
-        Set<Integer> startStates;
-        Set<Integer> endStates;
-        Map<Integer, Map<Character, Integer>> transitions;// DFA确定化转移，所以是Map<Character, Integer>
-
-        public DFA() {
-            this.startStates = new HashSet<>();
-            this.endStates = new HashSet<>();
-            this.transitions = new HashMap<>();
-        }
-
-        public void addTransition(int from, char input, int to) {
-            transitions.putIfAbsent(from, new HashMap<>());
-            transitions.get(from).put(input, to);
         }
     }
 
@@ -96,7 +57,6 @@ public class Exercise5 {
 
         for (int i = 0; i < regex.length(); i++) {
             char ch = regex.charAt(i);
-
             if (ch == '*' || ch == '+') {
                 if (ch == '*') {
                     nfa.removeTransition(current - 1, regex.charAt(i - 1), current);
@@ -105,13 +65,11 @@ public class Exercise5 {
                 nfa.addTransition(current, '\0', current + 1);
                 current++;
                 nfa.addTransition(current, regex.charAt(i - 1), current);
-
                 nfa.addTransition(current, '\0', current + 1);
-                current++;
             } else {
                 nfa.addTransition(current, ch, current + 1);
-                current++;
             }
+            current++;
         }
 
         nfa.startStates.add(0);
@@ -186,12 +144,12 @@ public class Exercise5 {
 
         for (int i = 0; i < str.length(); i++) {
             char input = str.charAt(i);
-            if (!dfa.transitions.containsKey(currentState) || !dfa.transitions.get(currentState).containsKey(input)) {
+            if (!dfa.getTransitions().containsKey(currentState) || !dfa.getTransitions().get(currentState).containsKey(input)) {
                 return false;
             }
-            currentState = dfa.transitions.get(currentState).get(input);
+            currentState = dfa.getTransitions().get(currentState).get(input);
         }
 
-        return dfa.endStates.contains(currentState);
+        return dfa.getEndStates().contains(currentState);
     }
 }
