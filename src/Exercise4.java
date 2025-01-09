@@ -2,12 +2,14 @@ import java.util.*;
 
 public class Exercise4 {
     public static void main(String[] args) {
-        String str1 = "-6*+3";
-        System.out.println(calc(str1));
-        String str2 = "-(-1)";
-        System.out.println(calc(str2));
-    }
+        isAssert(calc("-1"),-1);
 
+    }
+    public static void isAssert(Integer out,Integer expect){
+        if (!Objects.equals(out, expect)){
+            throw new IllegalArgumentException("Wrong result");
+        }
+    }
     static class DFANode {
         int stateId;
         Map<Character, Integer> transitions;
@@ -55,7 +57,7 @@ public class Exercise4 {
     }
 
     // 递归解析括号并计算表达式
-    private static int calc(String str) {
+    public static int calc(String str) {
         str = str.replaceAll(" ", "");
         StringBuffer substr = new StringBuffer(); // 用于提取括号内的内容
         int result = 0;
