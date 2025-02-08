@@ -10,11 +10,12 @@ public class Exercise1 {
         number.add(3);
         printAll(number);
     }
+
     public static void printAll(List<Integer> list) {
 
         System.out.println(list);
 
-        for(int i = 0; i < list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             System.out.println(list.get(i));
         }
 
@@ -22,6 +23,4 @@ public class Exercise1 {
             System.out.println(integer);
         }
     }
-
-
 }
