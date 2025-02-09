@@ -57,6 +57,19 @@ public class NFA {
         return endStates;
     }
 
+    public void setStartStates(Set<Integer> set) {
+        this.startStates = set;
+    }
+
+    public void setEndStates(Set<Integer> set) {
+        this.endStates = set;
+    }
+
+    public void setTransitions(Map<Integer, Map<Character, Set<Integer>>> map) {
+        this.transitions = map;
+    }
+
+
     public Map<Integer, Map<Character, Set<Integer>>> getTransitions() {
         return transitions;
     }
