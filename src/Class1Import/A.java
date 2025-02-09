@@ -1,6 +1,4 @@
 package Class1Import;
-import Class1Import.B; // Import
-
 public class A {
     static int numa = 1;
     static String stra = "I am class A";

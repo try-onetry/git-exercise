@@ -1,7 +1,5 @@
 package Class2Contain;
 
-import Class2Contain.B;
-
 public class A {
     int numa = 1;
     String stra = "I am class A";

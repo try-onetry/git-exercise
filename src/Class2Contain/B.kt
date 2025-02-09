@@ -1,7 +1,5 @@
 package Class2Contain
 
-import Class2Contain.A
-
 class B {
     val numb = 1
     val strb = "I am class B"
